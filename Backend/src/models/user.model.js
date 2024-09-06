@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
             required: [true, "Password is required"],
         },
         channels: [{
-            type: Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: "Channel"
         }]
     },

@@ -10,7 +10,7 @@ const router = Router()
 
 
 router.route("/:channelId/messages").get(getChannelMessage).post(addMessage);
-router.route("/c/:messageId").delete(deleteMessage).patch(updateMessage);
+router.route("/:channelId/:messageId").delete(deleteMessage).patch(updateMessage);
 
 
 export default router

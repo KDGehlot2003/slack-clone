@@ -21,11 +21,18 @@ app.use(cookieParser())
 
 
 // routes import 
+import userRouter from "./routes/user.routes.js"
+import messageRouter from "./routes/message.routes.js"
+import channelRouter from "./routes/channel.routes.js"
 
 
 
 
 //routes declaration
+app.use("/api/v1/users", userRouter)
+app.use("/api/v1/channels", messageRouter)
+app.use("/api/v1/channels", channelRouter)
+
 
 
 

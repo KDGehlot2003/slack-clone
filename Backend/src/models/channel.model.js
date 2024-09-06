@@ -7,7 +7,7 @@ const channelSchema = mongoose.Schema(
             required: true,
         },
         users: [{
-            type: Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         }],
 

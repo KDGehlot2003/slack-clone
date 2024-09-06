@@ -3,11 +3,11 @@ import mongoose from "mongoose";
 const messageSchema = mongoose.Schema(
     {
         channelId: {
-            type: Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: "Channel"
         },
         sender: {
-            type: Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         },
         message: {
@@ -19,3 +19,5 @@ const messageSchema = mongoose.Schema(
         timestamps: true
     }
 )
+
+export const Message = mongoose.model("Message",messageSchema)
