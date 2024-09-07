@@ -55,15 +55,70 @@ const getChannel = asyncHandler( async (req,res) => {
 })
 
 const joinChannel = asyncHandler( async (req,res) => {
-    
+    const {userId, channelId} = req.params;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+        return res.status(404).json({message: "user not found"})
+    }
+
+    const channel = await Channel.findById(channelId);
+
+    if (!channel) {
+        return res.status(404).json({message: "channel not found"})
+    }
+
+    if(!user.channels.includes(channelId)) {
+        user.channels.push(channelId)
+        await user.save()
+    }
+
+    if (!channel.users.includes(userId)) {
+        channel.users.push(userId)
+        await channel.save()
+    }
+
+    return res.status(200).json({ message: "Joined channel successfully" });
 })
 
 const leaveChannel = asyncHandler( async (req,res) => {
+    const {userId, channelId} = req.params;
 
+    const user = await User.findById(userId);
+
+    if (!user) {
+        return res.status(404).json({message: "user not found"})
+    }
+
+    const channel = await Channel.findById(channelId);
+
+    if (!channel) {
+        return res.status(404).json({message: "channel not found"})
+    }
+
+    user.channels = user.channels.filter(id => !id.equals(channelId))
+    await user.save()
+
+    channel.users = channel.users.filter(id => !id.equals(userId))
+    await channel.save()
+
+    return res.status(200).json({ message: "Left channel successfully" });
 })
 
 const getChannelUsers = asyncHandler( async (req,res) => {
+    const {channelId} = req.params
 
+    const channel = await Channel.findById(channelId).populate('users')
+
+    if (!channel) {
+        return res.status(404).json({message: 'channel not found'})
+    }
+
+    return res.status(200).json({
+        users: channel.users,
+        message: "Fetched channel users successfully"
+    })
 })
 
 
