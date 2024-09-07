@@ -1,5 +1,5 @@
 import { Router } from "express";
-
+import isLoggedIn from "../middlewares/isLoggedIn.js";
 import {
     createChannel,
     getChannel
@@ -7,6 +7,7 @@ import {
 
 const router = Router()
 
+router.use(isLoggedIn)
 
 router.route("/").post(createChannel);
 router.route("/:channelId").get(getChannel);

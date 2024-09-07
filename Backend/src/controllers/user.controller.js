@@ -79,10 +79,8 @@ const loginUser = asyncHandler( async (req,res) => {
 
     const loggedInUser = await User.findById(user._id).select('-password')
 
-    // const options = {
-    //     httpOnly: true,
-    //     secure: true
-    // }
+    // Set user data in a cookie
+    res.cookie('user', loggedInUser, { httpOnly: true, secure: true });
 
     return res
     .status(201)
@@ -94,11 +92,22 @@ const loginUser = asyncHandler( async (req,res) => {
 })
 
 const logoutUser = asyncHandler( async (req,res) => {
-    
+    // Clear the user cookie
+    res.clearCookie('user');
+    return res.status(200).json({ message: "User logged out successfully" });
 })
 
 const getUserProfile = asyncHandler( async (req,res) => {
+    // const user = req.cookies.user;
+    const {username} = req.params;
 
+    const userProfile = await User.findOne({username}).select('-password')
+
+    if (!userProfile) {
+        return res.status(404).json({message: "User not Found"})
+    }
+
+    return res.status(200).json({ userProfile, message: "User Fetch Successfully" });
 })
 
 export {

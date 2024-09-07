@@ -1,4 +1,5 @@
 import { Router } from "express";
+import isLoggedIn from "../middlewares/isLoggedIn.js";
 import {
     registerUser,
     loginUser,
@@ -12,7 +13,7 @@ const router = Router()
 
 router.route('/register').post(registerUser)
 router.route("/login").post(loginUser)
-router.route("/logout").post(logoutUser)
+router.route("/logout").post(isLoggedIn,logoutUser)
 router.route("/:username").get(getUserProfile)
 
 

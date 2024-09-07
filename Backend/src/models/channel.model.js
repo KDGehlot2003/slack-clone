@@ -2,9 +2,13 @@ import mongoose from "mongoose";
 
 const channelSchema = mongoose.Schema(
     {
-        name: {
+        channelName: {
             type: String,
             required: true,
+        },
+        createdBy: {
+            type: String,
+            require: true,
         },
         users: [{
             type: mongoose.Schema.Types.ObjectId,
