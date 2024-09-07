@@ -111,6 +111,16 @@ const getUserProfile = asyncHandler( async (req,res) => {
 })
 
 const getUserChannels = asyncHandler( async (req,res) => {
+    const {userId} = req.params;
+
+    const user = await User.findById(userId).populate('channels')
+
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({ channels: user.channels, message: "Fetched user channels successfully" });
+
 
 })
 
