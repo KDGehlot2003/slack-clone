@@ -1,5 +1,6 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import {Channel} from "../models/channel.model.js"
+import {User} from "../models/user.model.js"
 
 
 const createChannel = asyncHandler( async (req,res) => {
@@ -17,8 +18,19 @@ const createChannel = asyncHandler( async (req,res) => {
 
     const channel = await Channel.create({
         channelName,
-        createdBy: user,
+        createdBy: user._id,
+        users: [user._id]
+    }).catch(error => {
+        return res.status(500).json({ message: "Error creating channel", error });
     })
+
+    //add the channel to the user's list of channels
+    await User.findByIdAndUpdate(
+        user._id,
+        { $push: {channels: channel._id}}
+    ).catch(error => {
+        return res.status(500).json({ message: "Error updating user with new channel", error });
+    });
 
 
     return res
@@ -39,11 +51,26 @@ const getChannel = asyncHandler( async (req,res) => {
         return res.status(404).json({message: "Channel not found"})
     }
 
-    return res.status(201).json({channel, message: "Channel fetched Successfully"})
+    return res.status(200).json({channel, message: "Channel fetched Successfully"})
+})
+
+const joinChannel = asyncHandler( async (req,res) => {
+    
+})
+
+const leaveChannel = asyncHandler( async (req,res) => {
+
+})
+
+const getChannelUsers = asyncHandler( async (req,res) => {
+
 })
 
 
 export {
     createChannel,
-    getChannel
+    getChannel,
+    joinChannel,
+    leaveChannel,
+    getChannelUsers
 }

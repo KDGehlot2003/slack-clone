@@ -110,9 +110,14 @@ const getUserProfile = asyncHandler( async (req,res) => {
     return res.status(200).json({ userProfile, message: "User Fetch Successfully" });
 })
 
+const getUserChannels = asyncHandler( async (req,res) => {
+
+})
+
 export {
     registerUser,
     loginUser,
     logoutUser,
-    getUserProfile
+    getUserProfile,
+    getUserChannels
 }

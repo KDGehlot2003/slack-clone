@@ -4,7 +4,8 @@ import {
     registerUser,
     loginUser,
     logoutUser,
-    getUserProfile
+    getUserProfile,
+    getUserChannels
 } from "../controllers/user.controller.js"
 
 
@@ -15,6 +16,7 @@ router.route('/register').post(registerUser)
 router.route("/login").post(loginUser)
 router.route("/logout").post(isLoggedIn,logoutUser)
 router.route("/:username").get(getUserProfile)
+router.get('/:userId/channels', getUserChannels);
 
 
 export default router

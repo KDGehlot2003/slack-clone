@@ -9,7 +9,7 @@ const getChannelMessage = asyncHandler( async (req,res) =>  {
         channelId
     })
 
-    return res.status(201).json({messages, message: "Messages fetch successfully"})
+    return res.status(200).json({messages, message: "Messages fetch successfully"})
 })
 
 const addMessage = asyncHandler( async (req,res) =>  {
@@ -53,7 +53,7 @@ const deleteMessage = asyncHandler( async (req,res) =>  {
     const deleteMessage = await Message.findByIdAndDelete(messageId)
     
 
-    return res.status(201).json(deleteMessage,{message: "message deleted Successfully"})
+    return res.status(204).json({message: "message deleted Successfully"})
 })
 
 const updateMessage = asyncHandler( async (req,res) =>  {
