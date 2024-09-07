@@ -31,7 +31,15 @@ const createChannel = asyncHandler( async (req,res) => {
 })
 
 const getChannel = asyncHandler( async (req,res) => {
-    
+    const {channelId} = req.params
+
+    const channel  =  await Channel.findById(channelId)
+
+    if (!channel) {
+        return res.status(404).json({message: "Channel not found"})
+    }
+
+    return res.status(201).json({channel, message: "Channel fetched Successfully"})
 })
 
 
