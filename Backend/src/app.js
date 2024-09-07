@@ -30,7 +30,7 @@ import channelRouter from "./routes/channel.routes.js"
 
 //routes declaration
 app.use("/api/v1/users", userRouter)
-app.use("/api/v1/channels", messageRouter)
+app.use("/api/v1/channels", messageRouter) // TODO: Doubt
 app.use("/api/v1/channels", channelRouter)
 
 
