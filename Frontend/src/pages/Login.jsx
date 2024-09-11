@@ -9,47 +9,44 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
-const SignUp = () => {
+const Login = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
   const navigate = useNavigate();
 
-  const handleSignUp = async(e) => {
+  const handleLogin = async(e) => {
     e.preventDefault();
     try {
       
-      const response = await axios.post('http://localhost:8000/api/v1/users/register', {
-        fullName: name,
-        username,
+      const response = await axios.post('http://localhost:8000/api/v1/users/login', {
         email,
         password
-      });
+      });    
 
       if(response.status === 201) {
         localStorage.setItem('token', response.data.token);
-        toast.success('Registration successful! Redirecting to workspace...');
+        toast.success('Login successful! Redirecting to workspace...');
         setTimeout(() => navigate('/workspace'), 2000);
       }
       
     } catch (error) {
-      toast.error(error.response.data.message); 
+      toast.error('Login failed. Please check your credentials.');
     }
   }
 
-  const handleSignInClick = () => {
-    navigate('/login');
+  const handleSignUpClick = () => {
+    navigate('/signup');
   };
 
+
   return (
-    <Stack className='flex'>
+        <Stack className='flex'>
       <Stack 
         sx={{
           maxWidth: "fit-content",
           marginInline: "auto",
-          marginTop: "25px",
+          marginTop: "55px",
           justifyContent: "center",
           alignItems: "center"
         }} 
@@ -58,30 +55,10 @@ const SignUp = () => {
   
         <img src="slack_logo.svg" alt="" className=' w-28 cursor-pointer'  />
 
-        <h1 className='text-center font-bold text-5xl justify-center w-5/6 mt-5'>First of all, enter your email address</h1>
+        <h1 className='text-center font-bold text-5xl justify-center w-5/6 mt-5'>Sign in to Slack</h1>
         
         <p className='font-light mt-4'>We suggest using the <span className='font-medium'>email address that you use at work.</span></p>
 
-        <TextField 
-          // id="outlined-basic" 
-          id='name'
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder='Joe Doe'
-          variant="outlined" 
-          sx={{
-            width: "50%",
-            marginTop: "25px",
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "12px",
-              height: "50px"
-            },
-            "& .MuiInputBase-input::placeholder": {
-                color: "#454245",
-                opacity: 0.50,
-            },
-          }}
-        />
 
         <TextField 
           // id="outlined-basic" 
@@ -91,7 +68,8 @@ const SignUp = () => {
           placeholder='name@work-email.com'
           variant="outlined" 
           sx={{
-            width: "50%",
+            width: "90%",
+            marginTop: "30px",
             "& .MuiOutlinedInput-root": {
               borderRadius: "12px",
               height: "50px"
@@ -102,37 +80,18 @@ const SignUp = () => {
             },
           }}
         />
+
 
         <TextField 
           // id="outlined-basic" 
-          id='username'
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder='joe_doe123'
-          variant="outlined" 
-          sx={{
-            width: "50%",
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "12px",
-              height: "50px"
-            },
-            "& .MuiInputBase-input::placeholder": {
-                color: "#454245",
-                opacity: 0.50,
-            },
-          }}
-        />
-
-        <TextField 
-          itemID='password'
-          id="outlined-basic" 
+          id='password'
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder='Password'
           variant="outlined" 
           type='password'
           sx={{
-            width: "50%",
+            width: "90%",
             "& .MuiOutlinedInput-root": {
               borderRadius: "12px",
               height: "50px"
@@ -146,9 +105,9 @@ const SignUp = () => {
 
         <Button 
           variant="contained"
-          onClick={handleSignUp}
+          onClick={handleLogin}
           sx={{
-            width: "50%",
+            width: "90%",
             borderRadius: "12px",
             bgcolor: "#611f69",
             height: "45px",
@@ -158,12 +117,12 @@ const SignUp = () => {
             marginTop: "12px",
           }}
         >
-          Continue
+          Login
         </Button>
 
         <Divider 
           sx={{ 
-            width: "50%",
+            width: "90%",
             textAlign: "center", 
             marginTop: "5px"
           }}>
@@ -174,7 +133,7 @@ const SignUp = () => {
           variant="outlined"
           sx={{
             color: "black",
-            width: "50%",
+            width: "90%",
             borderColor: "#b6b6b7",
             borderRadius: "12px",
             height: "45px",
@@ -190,7 +149,7 @@ const SignUp = () => {
           variant="outlined"
           sx={{
             color: "black",
-            width: "50%",
+            width: "90%",
             borderColor: "#b6b6b7",
             borderRadius: "12px",
             height: "45px",
@@ -202,8 +161,8 @@ const SignUp = () => {
           Continue with Apple
         </Button>
 
-        <p className='font-light  text-sm text-[#616061]'>Already using Slack?</p>
-        <p className=' cursor-pointer text-sm text-[#1264a3]' onClick={handleSignInClick}>Sign in to an existing workspace</p>
+        <p className='font-light  text-sm text-[#616061]'>New to Slack?</p>
+        <p className=' cursor-pointer text-sm text-[#1264a3]' onClick={handleSignUpClick}>Create an account</p>
 
       </Stack>
       <Stack
@@ -212,7 +171,7 @@ const SignUp = () => {
 
           padding: "10px",
           textAlign: "center",
-          marginTop: "65px",
+          marginTop: "200px",
           width: "100%",
           maxWidth: "fit-content",
           marginInline: "auto",
@@ -230,9 +189,10 @@ const SignUp = () => {
           <img src="down-arrow.svg" alt="" className='w-3 opacity-60 ml-1' />
         </Stack>
       </Stack>
+
       <ToastContainer />
     </Stack>
   )
 }
 
-export default SignUp
+export default Login
