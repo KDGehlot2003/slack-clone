@@ -49,7 +49,7 @@ const SignUp = () => {
         sx={{
           maxWidth: "fit-content",
           marginInline: "auto",
-          marginTop: "25px",
+          marginTop: "40px",
           justifyContent: "center",
           alignItems: "center"
         }} 
@@ -212,7 +212,7 @@ const SignUp = () => {
 
           padding: "10px",
           textAlign: "center",
-          marginTop: "65px",
+          marginTop: "200px",
           width: "100%",
           maxWidth: "fit-content",
           marginInline: "auto",

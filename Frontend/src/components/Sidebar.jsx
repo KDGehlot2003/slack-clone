@@ -10,7 +10,7 @@ const Sidebar = () => {
         bgcolor: '#39063a',
         color: '#f1ecf0',
 				padding: '10px',
-        height: '95.45vh', 
+        height: '96.05vh', 
         flexDirection: 'column', 
       }}
     >

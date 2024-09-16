@@ -41,7 +41,7 @@ const Login = () => {
 
 
   return (
-        <Stack className='flex'>
+    <Stack className='flex'>
       <Stack 
         sx={{
           maxWidth: "fit-content",
@@ -171,7 +171,7 @@ const Login = () => {
 
           padding: "10px",
           textAlign: "center",
-          marginTop: "200px",
+          marginTop: "345px",
           width: "100%",
           maxWidth: "fit-content",
           marginInline: "auto",
