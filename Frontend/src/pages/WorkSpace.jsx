@@ -6,12 +6,13 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import axios from 'axios';
-import Cookies from 'js-cookie';
+import ChannelChat from '../components/ChannelChat.jsx';
 
 const WorkSpace = () => {
   const [isChannelOpen, setIsChannelOpen] = useState(false);
   const [isDirectMessageOpen, setIsDirectMessageOpen] = useState(false);
   const [channels, setChannels] = useState([]);
+  const [selectedChannel, setSelectedChannel] = useState(null); // State for selected channel
 
   // Function to toggle accordion open/close state
   const toggleChannelAccordion = () => {
@@ -75,10 +76,10 @@ const WorkSpace = () => {
               borderRadius: '8px',
             }}
           >
-            <Stack>
+            <Stack direction="row" >
               <Stack
                 sx={{
-                  width: '15%',
+                  width: '18%',
                   height: '95.49vh',
                   padding: '20px',
                   backgroundColor: "#4f2050",
@@ -99,8 +100,8 @@ const WorkSpace = () => {
                   <p className='flex opacity-60 hover:bg-[#5c315e] rounded-md '> <img src="send.svg" className='w-5 m-1 invert ' alt="" /> Drafts & sent</p>
                 </Stack>
                 <Stack gap={3} className=' opacity-60'>
-                  <div style={{ backgroundColor: '#4f2050', color: '#FFFFFF' }}>
-                    <div onClick={toggleChannelAccordion} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                  <Box style={{ backgroundColor: '#4f2050', color: '#FFFFFF' }}>
+                    <Box onClick={toggleChannelAccordion} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                       {/* ArrowDropDownIcon that rotates based on the accordion state */}
                       <ArrowDropDownIcon
                         style={{
@@ -111,20 +112,26 @@ const WorkSpace = () => {
                         className='hover:bg-[#5c315e] rounded-md '
                       />
                       <span className='hover:bg-[#5c315e] rounded-md px-1'>Channels</span>
-                    </div>
+                    </Box>
 
                     {/* Content to show/hide based on accordion open state */}
                     {isChannelOpen && (
                       <Stack className='w-full mt-1 '  gap={1}>
                         {channels.map(channel => (
-                          <p key={channel._id} className='hover:bg-[#5c315e] rounded-md  pl-3'># {channel.channelName}</p>
+                          <p 
+                            key={channel._id} 
+                            className='hover:bg-[#5c315e] rounded-md  pl-3 cursor-pointer'
+                            onClick={() => setSelectedChannel(channel.channelName)} // Update selected channel on click
+                          >
+                            # {channel.channelName}
+                          </p>
                         ))}
                         <p className='cursor-pointer'><span className='px-1 rounded-md pb-[2px] bg-[#623763]  '>+</span> Add channels</p>
                       </Stack>
                     )}
-                  </div>
-                  <div style={{ backgroundColor: '#4f2050', color: '#FFFFFF' }}>
-                    <div onClick={toggleDirectMessageAccordion} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                  </Box>
+                  <Box style={{ backgroundColor: '#4f2050', color: '#FFFFFF' }}>
+                    <Box onClick={toggleDirectMessageAccordion} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                       {/* ArrowDropDownIcon that rotates based on the accordion state */}
                       <ArrowDropDownIcon
                         style={{
@@ -135,17 +142,19 @@ const WorkSpace = () => {
                         className='hover:bg-[#5c315e] rounded-md '
                       />
                       <span>Direct messages</span>
-                    </div>
+                    </Box>
 
-                    {/* Content to show/hide based on accordion open state */}
                     {isDirectMessageOpen && (
                       <Stack className='w-full mt-1 ' gap={1}>
                         <p className='hover:bg-[#5c315e] rounded-md  pl-3'>Archit Agrawal</p>
                         <p className='cursor-pointer'><span className='px-1 rounded-md pb-[2px] bg-[#623763]  '>+</span> Add colleagues</p>
                       </Stack>
                     )}
-                  </div>
+                  </Box>
                 </Stack>
+              </Stack>
+              <Stack sx={{width: '100%'}}>
+                <ChannelChat selectedChannel={selectedChannel} /> 
               </Stack>
             </Stack>
           </Paper>
