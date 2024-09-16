@@ -5,6 +5,8 @@ import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const WorkSpace = () => {
   const [isChannelOpen, setIsChannelOpen] = useState(false);
@@ -21,6 +23,26 @@ const WorkSpace = () => {
     setIsDirectMessageOpen(!isDirectMessageOpen);
   };
 
+  // Fetch channels from the backend
+  useEffect(() => {
+    const fetchChannels = async () => {
+      try {
+        // Try to get user from localStorage first
+        let userId = localStorage.getItem('token');
+
+        if (userId) {
+          const response = await axios.get(`http://localhost:8000/api/v1/users/${userId}/channels`);
+          setChannels(response.data.channels); // Assuming the response data has a 'channels' field
+        } else {
+          console.error('User not logged in');
+        }
+      } catch (error) {
+        console.error('Error fetching channels:', error);
+      }
+    };
+
+    fetchChannels();
+  }, []);
 
   return (
     <Stack sx={{

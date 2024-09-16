@@ -25,7 +25,8 @@ const Login = () => {
       
 
       if (response.status === 201) {
-        localStorage.setItem('token', response.data.token);
+        
+        localStorage.setItem('token', response.data.user._id);
         toast.success('Login successful! Redirecting to workspace...');
         setTimeout(() => navigate('/workspace'), 2000);
       }
