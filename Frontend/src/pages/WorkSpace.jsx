@@ -31,7 +31,7 @@ const WorkSpace = () => {
         let userId = localStorage.getItem('token');
 
         if (userId) {
-          const response = await axios.get(`http://localhost:8000/api/v1/users/${userId}/channels`);
+          const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/users/${userId}/channels`);
           setChannels(response.data.channels); // Assuming the response data has a 'channels' field
         } else {
           console.error('User not logged in');
@@ -85,20 +85,20 @@ const WorkSpace = () => {
                   color: "white",
                   borderRadius: '7px 0px 0px 7px',
                 }}
-                gap={4}
+                gap={3}
               >
-                <Stack direction='row' gap={12}>
-                  <h2>AIVengers </h2>
+                <Stack direction='row' gap={4}>
+                  <h2 className='flex text-xl font-semibold hover:bg-[#5c315e] rounded-md pr-5 pl-2 -ml-4 '>AIVengers <img src="down-arrow.svg" alt="" className='pl-2 w-5 invert ' /></h2>
                   <Stack direction='row' gap={3}>
-                    <p>1</p>
-                    <p>2</p>
+                    <img src="sort.svg" className='w-5 invert' alt="" />
+                    <img src="edit.svg" className='w-5 invert' alt="" />
                   </Stack>
                 </Stack>
                 <Stack>
-                  <p>Theads</p>
-                  <p>Drafts & sent</p>
+                  <p className='flex opacity-60 hover:bg-[#5c315e] rounded-md '> <img src="message.svg" className='w-5 m-1 invert ' alt="" /> Theads</p>
+                  <p className='flex opacity-60 hover:bg-[#5c315e] rounded-md '> <img src="send.svg" className='w-5 m-1 invert ' alt="" /> Drafts & sent</p>
                 </Stack>
-                <Stack gap={3}>
+                <Stack gap={3} className=' opacity-60'>
                   <div style={{ backgroundColor: '#4f2050', color: '#FFFFFF' }}>
                     <div onClick={toggleChannelAccordion} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                       {/* ArrowDropDownIcon that rotates based on the accordion state */}
@@ -108,18 +108,19 @@ const WorkSpace = () => {
                           transition: 'transform 0.3s ease',
                           marginRight: '8px',
                         }}
+                        className='hover:bg-[#5c315e] rounded-md '
                       />
-                      <span>Channels</span>
+                      <span className='hover:bg-[#5c315e] rounded-md px-1'>Channels</span>
                     </div>
 
                     {/* Content to show/hide based on accordion open state */}
                     {isChannelOpen && (
-                      <ul style={{ listStyleType: 'none', paddingLeft: '20px', marginTop: '10px' }}>
+                      <Stack className='w-full mt-1 '  gap={1}>
                         {channels.map(channel => (
-                          <li key={channel._id}># {channel.channelName}</li>
+                          <p key={channel._id} className='hover:bg-[#5c315e] rounded-md  pl-3'># {channel.channelName}</p>
                         ))}
-                        <li style={{ color: '#9E9EA6', cursor: 'pointer' }}>+ Add channels</li>
-                      </ul>
+                        <p className='cursor-pointer'><span className='px-1 rounded-md pb-[2px] bg-[#623763]  '>+</span> Add channels</p>
+                      </Stack>
                     )}
                   </div>
                   <div style={{ backgroundColor: '#4f2050', color: '#FFFFFF' }}>
@@ -131,16 +132,17 @@ const WorkSpace = () => {
                           transition: 'transform 0.3s ease',
                           marginRight: '8px',
                         }}
+                        className='hover:bg-[#5c315e] rounded-md '
                       />
                       <span>Direct messages</span>
                     </div>
 
                     {/* Content to show/hide based on accordion open state */}
                     {isDirectMessageOpen && (
-                      <ul style={{ listStyleType: 'none', paddingLeft: '20px', marginTop: '10px' }}>
-                        <li>Archit Agrawal</li>
-                        <li style={{ color: '#9E9EA6', cursor: 'pointer' }}>+ Add colleagues</li>
-                      </ul>
+                      <Stack className='w-full mt-1 ' gap={1}>
+                        <p className='hover:bg-[#5c315e] rounded-md  pl-3'>Archit Agrawal</p>
+                        <p className='cursor-pointer'><span className='px-1 rounded-md pb-[2px] bg-[#623763]  '>+</span> Add colleagues</p>
+                      </Stack>
                     )}
                   </div>
                 </Stack>
