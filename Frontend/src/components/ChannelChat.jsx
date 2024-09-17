@@ -1,22 +1,42 @@
-import { Box, Divider, Stack, TextField, Button } from '@mui/material';
-import React, { useState } from 'react';
+import { Box, Divider, Stack, TextField } from '@mui/material';
+import React, { useState, useEffect, useRef } from 'react';
 
 const ChannelChat = ({ selectedChannel }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const messagesEndRef = useRef(null);
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
-      setMessages([...messages, { text: newMessage, sender: 'You' }]);
+      const lastMessage = messages[messages.length - 1];
+
+      // Check if the last message is from the same sender
+      if (lastMessage && lastMessage.sender === 'You') {
+        // Append the new message to the last sender's messages
+        const updatedMessages = [...messages];
+        updatedMessages[updatedMessages.length - 1].text.push(newMessage);
+        setMessages(updatedMessages);
+      } else {
+        // Add a new message block for a different sender
+        setMessages([...messages, { sender: 'You', text: [newMessage] }]);
+      }
+
       setNewMessage('');
     }
   };
-	const handleKeyDown = (e) => {
+
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault(); // Prevents the default action of the Enter key
       handleSendMessage();
     }
   };
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
 
   return (
     <Stack
@@ -58,20 +78,27 @@ const ChannelChat = ({ selectedChannel }) => {
         sx={{
           flexGrow: 1,
           overflowY: 'auto',
+          maxHeight: '770px', // Set a fixed height to make it scrollable
+          display: 'flex',
+          flexDirection: 'column-reverse', // Reverse the flow of the messages
           marginTop: '1rem',
           padding: '1rem',
           backgroundColor: '#f5f5f5',
           borderRadius: '8px',
         }}
       >
+        <div ref={messagesEndRef} />
         {messages.length > 0 ? (
           messages.map((message, index) => (
             <Box key={index} sx={{ marginBottom: '1rem' }}>
-              <strong>{message.sender}:</strong> {message.text}
+              <strong>{message.sender}:</strong>
+              {message.text.map((text, idx) => (
+                <p key={idx}>{text}</p>
+              ))}
             </Box>
           ))
         ) : (
-          <p>No messages yet.</p>
+          <p className='text-center mb-96'>No messages yet. <span className='text-2xl'>🥲</span></p>
         )}
       </Box>
 
@@ -83,14 +110,13 @@ const ChannelChat = ({ selectedChannel }) => {
           marginTop: '1rem',
           padding: '0.5rem',
           borderRadius: '12px',
-          backgroundColor: '#f5f5f5',
         }}
       >
         <TextField
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-					onKeyDown={handleKeyDown}
-          placeholder='Type a message...'
+          onKeyDown={handleKeyDown}
+          placeholder={'Message ' + '#' + selectedChannel}
           variant="outlined"
           sx={{
             flexGrow: 1,
@@ -100,17 +126,12 @@ const ChannelChat = ({ selectedChannel }) => {
             },
           }}
         />
-        <Button
-          variant="contained"
-          onClick={handleSendMessage}
-          sx={{
-            borderRadius: '12px',
-            bgcolor: '#611f69',
-            textTransform: 'none',
-          }}
-        >
-          Send
-        </Button>
+        <img 
+          src="send.svg" 
+          alt="" 
+          className='w-6 mr-3 cursor-pointer' 
+          onClick={handleSendMessage} 
+        />
       </Box>
     </Stack>
   );

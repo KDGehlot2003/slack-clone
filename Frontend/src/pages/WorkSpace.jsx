@@ -52,7 +52,7 @@ const WorkSpace = () => {
       width: '100%',
       height: '100vh',
       backgroundColor: '#39063a',
-      overflow: 'hidden'
+      overflow: 'hidden',
     }}>
       <Header />
       <Stack direction='row'>
