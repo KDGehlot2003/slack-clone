@@ -1,33 +1,88 @@
 import { Box, Divider, Stack, TextField } from '@mui/material';
 import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 
-const ChannelChat = ({ selectedChannel }) => {
+const ChannelChat = ({ selectedChannel, selectedChannelId }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const messagesEndRef = useRef(null);
+  const [user, setUser] = useState(null);
 
-  const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      const lastMessage = messages[messages.length - 1];
 
-      // Check if the last message is from the same sender
-      if (lastMessage && lastMessage.sender === 'You') {
-        // Append the new message to the last sender's messages
-        const updatedMessages = [...messages];
-        updatedMessages[updatedMessages.length - 1].text.push(newMessage);
-        setMessages(updatedMessages);
-      } else {
-        // Add a new message block for a different sender
-        setMessages([...messages, { sender: 'You', text: [newMessage] }]);
+  // TODO: Fetch user from the server
+  // /users/:username add this to the url to get the user's username
+
+
+  // Fetch messages when selectedChannelId changes
+  useEffect(() => {
+    const fetchMessages = async () => {
+      if (!selectedChannelId) return; // Skip if no channel selected
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/channels/${selectedChannelId}/messages`, {
+          withCredentials: true,
+        });
+
+        // const reversedMessages = response.data.messages.reverse();
+
+        // if the message is of user then set the sender to 'You'
+
+        
+        // const messages = reversedMessages.map((message) => {
+        //   if (message.sender === user.username) {
+        //     message.sender = 'You';
+        //   }
+        //   return message;
+        // });
+
+        // setMessages(messages);
+
+        // console.log(response);
+        
+
+        setMessages(response.data.messages.reverse());
+      } catch (error) {
+        setError('Failed to fetch messages.');
+        console.error('Error fetching messages:', error.response?.data || error.message);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      setNewMessage('');
+    fetchMessages();
+  }, [selectedChannelId]);
+
+  const handleSendMessage = async () => {
+    if (newMessage.trim()) {
+      const messageToSend = {
+        message: newMessage.trim(),
+        username: "You",
+        sender: 'You',
+        channelId: selectedChannelId,
+      };
+
+      try {
+        await axios.post(`${import.meta.env.VITE_APP_API_URL}/channels/${selectedChannelId}/messages`, messageToSend, {
+          withCredentials: true,
+        });
+
+        // Update the local message state after sending
+        setMessages([ messageToSend, ...messages]);
+        setNewMessage('');
+      } catch (error) {
+        console.error('Error sending message:', error.response?.data || error.message);
+      }
     }
   };
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      e.preventDefault(); // Prevents the default action of the Enter key
+      e.preventDefault();
       handleSendMessage();
     }
   };
@@ -78,9 +133,9 @@ const ChannelChat = ({ selectedChannel }) => {
         sx={{
           flexGrow: 1,
           overflowY: 'auto',
-          maxHeight: '770px', // Set a fixed height to make it scrollable
+          maxHeight: '770px',
           display: 'flex',
-          flexDirection: 'column-reverse', // Reverse the flow of the messages
+          flexDirection: 'column-reverse',
           marginTop: '1rem',
           padding: '1rem',
           backgroundColor: '#f5f5f5',
@@ -88,17 +143,20 @@ const ChannelChat = ({ selectedChannel }) => {
         }}
       >
         <div ref={messagesEndRef} />
+        {loading && <p>Loading messages...</p>}
+        {error && <p>{error}</p>}
         {messages.length > 0 ? (
           messages.map((message, index) => (
-            <Box key={index} sx={{ marginBottom: '1rem' }}>
-              <strong>{message.sender}:</strong>
-              {message.text.map((text, idx) => (
-                <p key={idx}>{text}</p>
-              ))}
+            <Box key={index} sx={{ marginBottom: '1rem', display: 'flex' }}>
+              <p className='text-center pt-2 bg-gray-400 w-10 h-10 rounded-md'>{message?.username[0].toUpperCase()}</p>
+              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                <strong className='ml-2 text-md'>{message.username}</strong>
+                <p className='ml-2'>{message.message}</p> {/* Adjust field names as needed */}
+              </Box>
             </Box>
           ))
         ) : (
-          <p className='text-center mb-96'>No messages yet. <span className='text-2xl'>🥲</span></p>
+          !loading && <p className='text-center mb-96'>No messages yet. <span className='text-2xl'>🥲</span></p>
         )}
       </Box>
 
@@ -126,11 +184,11 @@ const ChannelChat = ({ selectedChannel }) => {
             },
           }}
         />
-        <img 
-          src="send.svg" 
-          alt="" 
-          className='w-6 mr-3 cursor-pointer' 
-          onClick={handleSendMessage} 
+        <img
+          src="send.svg"
+          alt=""
+          className='w-6 mr-3 cursor-pointer'
+          onClick={handleSendMessage}
         />
       </Box>
     </Stack>
