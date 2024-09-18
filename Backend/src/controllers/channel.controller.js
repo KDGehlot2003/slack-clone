@@ -14,7 +14,7 @@ const createChannel = asyncHandler( async (req,res) => {
         return res.status(400).json({message: "Channel Name should not be more than 80 characters long"})
     }
 
-    const user = req.cookies.user ; // User info saved during login
+    const user = JSON.parse(req.cookies.user) ; // User info saved during login
 
     const channel = await Channel.create({
         channelName,

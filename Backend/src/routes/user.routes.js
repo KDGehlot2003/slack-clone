@@ -15,8 +15,11 @@ const router = Router()
 router.route('/register').post(registerUser)
 router.route("/login").post(loginUser)
 router.route("/logout").post(isLoggedIn,logoutUser)
+router.route("/channels").get(isLoggedIn,getUserChannels)
 router.route("/:username").get(getUserProfile)
-router.get('/:userId/channels', getUserChannels);
+
+
+// router.get('/:userId/channels', getUserChannels); FIXME
 
 
 export default router

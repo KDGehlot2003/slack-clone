@@ -16,6 +16,9 @@ const addMessage = asyncHandler( async (req,res) =>  {
     const {channelId} = req.params;
     const {message} = req.body;
 
+    
+    const user = JSON.parse(req.cookies.user);
+
     if (!channelId)  {
         return res.status(400).json({message: "Channel required"})
     }
@@ -26,7 +29,8 @@ const addMessage = asyncHandler( async (req,res) =>  {
 
     const createdmessage = await Message.create({
         message,
-        sender: req.cookies.user,
+        sender: user,
+        username: user.username,
         channelId
     })
 

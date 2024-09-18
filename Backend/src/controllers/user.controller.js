@@ -80,7 +80,17 @@ const loginUser = asyncHandler( async (req,res) => {
     const loggedInUser = await User.findById(user._id).select('-password')
 
     // Set user data in a cookie
-    res.cookie('user', loggedInUser, { httpOnly: true, secure: true });
+    res.cookie('user', JSON.stringify(loggedInUser), { 
+        httpOnly: true, 
+        secure: true, 
+        sameSite: 'None',
+        maxAge: 24 * 60 * 60 * 1000 // 1 day
+    });
+
+
+    // console.log(req.cookies.user);
+    
+
 
     return res
     .status(201)
@@ -111,7 +121,15 @@ const getUserProfile = asyncHandler( async (req,res) => {
 })
 
 const getUserChannels = asyncHandler( async (req,res) => {
-    const {userId} = req.params;
+    // const {userId} = req.params;
+    // const user = req.cookies.user;
+    // const userId = req.cookies.user._id
+    // console.log(JSON.parse(req.cookies.user)._id);
+    const userId = JSON.parse(req.cookies.user)._id;
+    
+    // console.log(userId);
+    
+    
 
     const user = await User.findById(userId).populate('channels')
 
