@@ -10,7 +10,6 @@ import TextField from '@mui/material/TextField';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import axios from 'axios';
 import ChannelChat from '../components/ChannelChat.jsx';
-import Cookies from 'js-cookie';
 
 const WorkSpace = () => {
   const [isChannelOpen, setIsChannelOpen] = useState(false);
@@ -95,8 +94,9 @@ const WorkSpace = () => {
             flexWrap: 'wrap',
             '& > :not(style)': {
               m: 1,
-              width: 1633,
-              height: 983,
+              // adjust width to fit the screen //FIXME: This is a temporary fix
+              width: '95vw' ,
+              height: '95.49vh',
             },
           }}
         >
@@ -109,7 +109,7 @@ const WorkSpace = () => {
             <Stack direction="row">
               <Stack
                 sx={{
-                  width: '18%',
+                  width: '600px',  // FIXME
                   height: '95.49vh',
                   padding: '20px',
                   backgroundColor: "#4f2050",
@@ -184,7 +184,7 @@ const WorkSpace = () => {
                 </Stack>
               </Stack>
 
-              <Stack sx={{ width: '100%' }}>
+              <Stack sx={{ width: '110vw' }}>
                 <ChannelChat selectedChannel={selectedChannel} selectedChannelId={selectedChannelId} /> 
               </Stack>
             </Stack>

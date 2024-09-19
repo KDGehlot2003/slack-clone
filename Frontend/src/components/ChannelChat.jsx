@@ -96,7 +96,7 @@ const ChannelChat = ({ selectedChannel, selectedChannelId }) => {
   return (
     <Stack
       sx={{
-        width: '100%',
+        width: '80vw',
         height: '100%',
         padding: '1rem',
         display: 'flex',
@@ -133,7 +133,7 @@ const ChannelChat = ({ selectedChannel, selectedChannelId }) => {
         sx={{
           flexGrow: 1,
           overflowY: 'auto',
-          maxHeight: '770px',
+          height: '70vh',
           display: 'flex',
           flexDirection: 'column-reverse',
           marginTop: '1rem',
@@ -168,6 +168,7 @@ const ChannelChat = ({ selectedChannel, selectedChannelId }) => {
           marginTop: '1rem',
           padding: '0.5rem',
           borderRadius: '12px',
+          width: '78vw',
         }}
       >
         <TextField
