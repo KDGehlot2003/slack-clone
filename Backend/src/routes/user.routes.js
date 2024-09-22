@@ -1,5 +1,6 @@
 import { Router } from "express";
-import isLoggedIn from "../middlewares/isLoggedIn.js";
+// import isLoggedIn from "../middlewares/isLoggedIn.js";
+import verifyJWT from "../middlewares/auth.middleware.js";
 import {
     registerUser,
     loginUser,
@@ -14,8 +15,8 @@ const router = Router()
 
 router.route('/register').post(registerUser)
 router.route("/login").post(loginUser)
-router.route("/logout").post(isLoggedIn,logoutUser)
-router.route("/channels").get(isLoggedIn,getUserChannels)
+router.route("/logout").post(verifyJWT,logoutUser)
+router.route("/channels").get(verifyJWT,getUserChannels)
 router.route("/:username").get(getUserProfile)
 
 

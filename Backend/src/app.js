@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
     credentials: true
 }));
 app.use(express.json({
@@ -30,7 +30,7 @@ import channelRouter from "./routes/channel.routes.js"
 
 //routes declaration
 app.use("/api/v1/users", userRouter)
-app.use("/api/v1/channels", messageRouter) // TODO: Doubt
+app.use("/api/v1/messages", messageRouter) // FIXME: Doubt
 app.use("/api/v1/channels", channelRouter)
 
 

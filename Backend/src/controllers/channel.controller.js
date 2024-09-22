@@ -14,19 +14,18 @@ const createChannel = asyncHandler( async (req,res) => {
         return res.status(400).json({message: "Channel Name should not be more than 80 characters long"})
     }
 
-    const user = JSON.parse(req.cookies.user) ; // User info saved during login
 
     const channel = await Channel.create({
         channelName,
-        createdBy: user._id,
-        users: [user._id]
+        createdBy: req.user._id,
+        users: [req.user._id]
     }).catch(error => {
         return res.status(500).json({ message: "Error creating channel", error });
     })
 
     //add the channel to the user's list of channels
     await User.findByIdAndUpdate(
-        user._id,
+        req.user._id,
         { $push: {channels: channel._id}}
     ).catch(error => {
         return res.status(500).json({ message: "Error updating user with new channel", error });
@@ -69,6 +68,10 @@ const joinChannel = asyncHandler( async (req,res) => {
         return res.status(404).json({message: "channel not found"})
     }
 
+    if (channel.users.includes(userId)) {
+        return res.status(400).json({message: "User already in channel"})
+    }
+
     if(!user.channels.includes(channelId)) {
         user.channels.push(channelId)
         await user.save()
@@ -95,6 +98,10 @@ const leaveChannel = asyncHandler( async (req,res) => {
 
     if (!channel) {
         return res.status(404).json({message: "channel not found"})
+    }
+
+    if (!channel.users.includes(userId)) {
+        return res.status(400).json({message: "User not in channel"})
     }
 
     user.channels = user.channels.filter(id => !id.equals(channelId))

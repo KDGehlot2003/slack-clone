@@ -10,6 +10,8 @@ import TextField from '@mui/material/TextField';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import axios from 'axios';
 import ChannelChat from '../components/ChannelChat.jsx';
+// cookie
+import Cookie from 'js-cookie';
 
 const WorkSpace = () => {
   const [isChannelOpen, setIsChannelOpen] = useState(false);
@@ -19,6 +21,12 @@ const WorkSpace = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newChannelName, setNewChannelName] = useState('');
   const [selectedChannelId, setSelectedChannelId] = useState(null);
+
+
+  // Get the token from the cookie
+  const token = Cookie.get('user'); // TODO: doubt
+
+
 
   const toggleChannelAccordion = () => {
     setIsChannelOpen(!isChannelOpen);

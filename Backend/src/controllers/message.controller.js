@@ -17,7 +17,6 @@ const addMessage = asyncHandler( async (req,res) =>  {
     const {message} = req.body;
 
     
-    const user = JSON.parse(req.cookies.user);
 
     if (!channelId)  {
         return res.status(400).json({message: "Channel required"})
@@ -29,8 +28,8 @@ const addMessage = asyncHandler( async (req,res) =>  {
 
     const createdmessage = await Message.create({
         message,
-        sender: user,
-        username: user.username,
+        sender: req.user._id,
+        username: req.user.username,
         channelId
     })
 
@@ -50,6 +49,10 @@ const deleteMessage = asyncHandler( async (req,res) =>  {
 
     const message = await Message.findById(messageId)
 
+    if (message.sender.toString() !== req.user._id.toString()) {
+        return res.status(401).json({message: "You are not authorized to delete this message"})
+    }
+
     if (!message) {
         return res.status(404).json({message: "message not found"})
     }
@@ -61,14 +64,20 @@ const deleteMessage = asyncHandler( async (req,res) =>  {
 })
 
 const updateMessage = asyncHandler( async (req,res) =>  {
-    const {channelId, messageId} = req.params;
+    const {messageId} = req.params;
     const {message} = req.body;
 
     if (!message) {
         return res.status(400).json({message: "message required"})
     }
 
+    // sender who created the message can only update the message
+
     const fetchedMessage = await Message.findById(messageId)
+
+    if (fetchedMessage.sender.toString() !== req.user._id.toString()) {
+        return res.status(401).json({message: "You are not authorized to update this message"})
+    }
 
     if (!fetchedMessage) {
         return res.status(404).json({message: "message not found"})

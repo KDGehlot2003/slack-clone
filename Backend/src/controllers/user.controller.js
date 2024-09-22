@@ -4,6 +4,24 @@ import {User} from "../models/user.model.js"
 // import { ApiResponse } from "../utils/ApiResponse.js"
 
 
+const generateAccessAndRefreshTokens = async (userId) => {
+    try {
+        const user = await User.findById(userId)
+
+        const accessToken = user.generateAccessToken()
+        const refreshToken = user.generateRefreshToken()
+
+        user.refreshToken = refreshToken
+        await user.save({validateBeforeSave: false})
+
+        return {accessToken,refreshToken}
+
+
+    } catch (error) {
+        res.status(500).json({message: "Something went wrong while generating tokens"})
+    }
+}
+
 const registerUser = asyncHandler( async (req,res) => {
     const { fullName, email, username, password} = req.body;
 
@@ -40,7 +58,7 @@ const registerUser = asyncHandler( async (req,res) => {
         password
     })
     
-    const createdUser = await User.findById(user._id).select(' -password ')
+    const createdUser = await User.findById(user._id).select(' -password -refreshToken')
 
     if (!createdUser) {
         return res.status(500).json({message: "Something went wrong while registering the user"})
@@ -77,41 +95,56 @@ const loginUser = asyncHandler( async (req,res) => {
         return res.status(401).json({message: "Invalid user credentials"})
     }
 
-    const loggedInUser = await User.findById(user._id).select('-password')
-
-    // Set user data in a cookie
-    res.cookie('user', JSON.stringify(loggedInUser), { 
-        httpOnly: true, 
-        secure: true, 
-        sameSite: 'None',
-        maxAge: 24 * 60 * 60 * 1000 // 1 day
-    });
+    const {accessToken,refreshToken} = await generateAccessAndRefreshTokens(user._id)
 
 
-    // console.log(req.cookies.user);
-    
+    const loggedInUser = await User.findById(user._id).select('-password -refreshToken')
 
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
 
     return res
     .status(201)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
     .json({
-        user: loggedInUser,
+        user: loggedInUser, accessToken, refreshToken,
         message: "User logged In Successfully..."
     })
 
 })
 
 const logoutUser = asyncHandler( async (req,res) => {
-    // Clear the user cookie
-    res.clearCookie('user');
-    return res.status(200).json({ message: "User logged out successfully" });
+
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $unset: {
+                refreshToken: 1 //this will remove the refreshToken field from the document
+            }
+        },
+        { new: true }
+    )
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json({message: "User logged out successfully"})
+
 })
 
 const getUserProfile = asyncHandler( async (req,res) => {
-    // const user = req.cookies.user;
-    const {username} = req.params;
 
-    const userProfile = await User.findOne({username}).select('-password')
+    const userProfile = await User.findOne(req.user?._id).select('-password')
 
     if (!userProfile) {
         return res.status(404).json({message: "User not Found"})
@@ -121,17 +154,8 @@ const getUserProfile = asyncHandler( async (req,res) => {
 })
 
 const getUserChannels = asyncHandler( async (req,res) => {
-    // const {userId} = req.params;
-    // const user = req.cookies.user;
-    // const userId = req.cookies.user._id
-    // console.log(JSON.parse(req.cookies.user)._id);
-    const userId = JSON.parse(req.cookies.user)._id;
-    
-    // console.log(userId);
-    
-    
 
-    const user = await User.findById(userId).populate('channels')
+    const user = await User.findById(req.user._id).populate('channels')
 
     if (!user) {
         return res.status(404).json({ message: "User not found" });

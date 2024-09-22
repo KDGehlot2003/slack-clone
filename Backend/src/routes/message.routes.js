@@ -1,5 +1,6 @@
 import { Router } from "express";
-import isLoggedIn from "../middlewares/isLoggedIn.js";
+// import isLoggedIn from "../middlewares/isLoggedIn.js";
+import verifyJWT from "../middlewares/auth.middleware.js";
 import {
     getChannelMessage,
     addMessage,
@@ -9,7 +10,7 @@ import {
 
 const router = Router()
 
-router.use(isLoggedIn)
+router.use(verifyJWT)
 
 
 router.route("/:channelId/messages").get(getChannelMessage).post(addMessage);
