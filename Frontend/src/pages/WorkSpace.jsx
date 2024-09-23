@@ -97,14 +97,14 @@ const WorkSpace = () => {
         <Box
           sx={{
             marginLeft: '-9px',
-            marginTop: '-9px',
+            marginTop: '5px',
             display: 'flex',
             flexWrap: 'wrap',
             '& > :not(style)': {
               m: 1,
               // adjust width to fit the screen //FIXME: This is a temporary fix
               width: '95vw' ,
-              height: '95.49vh',
+              height: '93.49vh',              
             },
           }}
         >
@@ -118,7 +118,7 @@ const WorkSpace = () => {
               <Stack
                 sx={{
                   width: '600px',  // FIXME
-                  height: '95.49vh',
+                  height: '93.49vh',
                   padding: '20px',
                   backgroundColor: "#4f2050",
                   color: "white",

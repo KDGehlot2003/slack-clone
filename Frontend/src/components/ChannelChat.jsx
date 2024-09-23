@@ -24,7 +24,7 @@ const ChannelChat = ({ selectedChannel, selectedChannelId }) => {
       setError(null);
 
       try {
-        const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/channels/${selectedChannelId}/messages`, {
+        const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/messages/${selectedChannelId}/`, {
           withCredentials: true,
         });
 
@@ -67,7 +67,7 @@ const ChannelChat = ({ selectedChannel, selectedChannelId }) => {
       };
 
       try {
-        await axios.post(`${import.meta.env.VITE_APP_API_URL}/channels/${selectedChannelId}/messages`, messageToSend, {
+        await axios.post(`${import.meta.env.VITE_APP_API_URL}/messages/${selectedChannelId}/`, messageToSend, {
           withCredentials: true,
         });
 

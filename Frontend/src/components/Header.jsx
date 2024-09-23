@@ -8,10 +8,12 @@ function Header() {
       direction="row" 
       spacing={2}
       sx={{
-        padding: '10px',
+        marginTop: '10px',
+        // padding: '10px',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '40px',
+        height: '60px',
+        minHeight: '10px',
         bgcolor: '#39063a',
       }}
     >

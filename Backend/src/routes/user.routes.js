@@ -17,7 +17,7 @@ router.route('/register').post(registerUser)
 router.route("/login").post(loginUser)
 router.route("/logout").post(verifyJWT,logoutUser)
 router.route("/channels").get(verifyJWT,getUserChannels)
-router.route("/:username").get(getUserProfile)
+router.route("/").get(verifyJWT,getUserProfile)
 
 
 // router.get('/:userId/channels', getUserChannels); FIXME
