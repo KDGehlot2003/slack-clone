@@ -10,7 +10,6 @@ import TextField from '@mui/material/TextField';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import axios from 'axios';
 import ChannelChat from '../components/ChannelChat.jsx';
-// cookie
 import Cookie from 'js-cookie';
 
 const WorkSpace = () => {
@@ -22,11 +21,7 @@ const WorkSpace = () => {
   const [newChannelName, setNewChannelName] = useState('');
   const [selectedChannelId, setSelectedChannelId] = useState(null);
 
-
-  // Get the token from the cookie
-  const token = Cookie.get('user'); // TODO: doubt
-
-
+  const token = Cookie.get('user');
 
   const toggleChannelAccordion = () => {
     setIsChannelOpen(!isChannelOpen);
@@ -79,7 +74,7 @@ const WorkSpace = () => {
 
   const handleSelectChannel = (channel) => {
     setSelectedChannel(channel.channelName);
-    setSelectedChannelId(channel._id); // Set the selected channel ID
+    setSelectedChannelId(channel._id);
   };
 
   return (
@@ -102,9 +97,8 @@ const WorkSpace = () => {
             flexWrap: 'wrap',
             '& > :not(style)': {
               m: 1,
-              // adjust width to fit the screen //FIXME: This is a temporary fix
-              width: '95vw' ,
-              height: '93.49vh',              
+              width: '95vw',
+              height: '93.49vh',
             },
           }}
         >
@@ -117,7 +111,7 @@ const WorkSpace = () => {
             <Stack direction="row">
               <Stack
                 sx={{
-                  width: '600px',  // FIXME
+                  width: '600px',
                   height: '93.49vh',
                   padding: '20px',
                   backgroundColor: "#4f2050",
@@ -157,7 +151,11 @@ const WorkSpace = () => {
                           <p
                             key={channel._id}
                             className='hover:bg-[#5c315e] rounded-md pl-3 cursor-pointer'
-                            onClick={() => handleSelectChannel(channel)} // Update selected channel and ID on click
+                            style={{
+                              backgroundColor: selectedChannel === channel.channelName ? 'white' : 'inherit',
+                              color: selectedChannel === channel.channelName ? 'black' : 'inherit',
+                            }}
+                            onClick={() => handleSelectChannel(channel)}
                           >
                             # {channel.channelName}
                           </p>
@@ -193,14 +191,13 @@ const WorkSpace = () => {
               </Stack>
 
               <Stack sx={{ width: '110vw' }}>
-                <ChannelChat selectedChannel={selectedChannel} selectedChannelId={selectedChannelId} /> 
+                <ChannelChat selectedChannel={selectedChannel} selectedChannelId={selectedChannelId} />
               </Stack>
             </Stack>
           </Paper>
         </Box>
       </Stack>
 
-      {/* Modal for Adding a New Channel */}
       <Modal
         open={isModalOpen}
         onClose={handleCloseModal}

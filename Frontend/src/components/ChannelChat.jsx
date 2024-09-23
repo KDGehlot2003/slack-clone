@@ -1,4 +1,4 @@
-import { Box, Divider, Stack, TextField } from '@mui/material';
+import { Box, CircularProgress, Divider, Stack, TextField } from '@mui/material';
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
@@ -143,7 +143,12 @@ const ChannelChat = ({ selectedChannel, selectedChannelId }) => {
         }}
       >
         <div ref={messagesEndRef} />
-        {loading && <p>Loading messages...</p>}
+        {loading && <CircularProgress sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '60%',
+          transform: 'translate(-50%, -50%)',
+        }} />}
         {error && <p>{error}</p>}
         {messages.length > 0 ? (
           messages.map((message, index) => (
