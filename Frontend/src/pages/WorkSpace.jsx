@@ -11,6 +11,10 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import axios from 'axios';
 import ChannelChat from '../components/ChannelChat.jsx';
 import Cookie from 'js-cookie';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
 
 const WorkSpace = () => {
   const [isChannelOpen, setIsChannelOpen] = useState(false);
@@ -20,6 +24,9 @@ const WorkSpace = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newChannelName, setNewChannelName] = useState('');
   const [selectedChannelId, setSelectedChannelId] = useState(null);
+  const [contextMenu, setContextMenu] = useState(null);
+  const [channelUsers, setChannelUsers] = useState([]);
+  const [rightClickedChannel, setRightClickedChannel] = useState(null); // New state for right-clicked channel
 
   const token = Cookie.get('user');
 
@@ -77,15 +84,45 @@ const WorkSpace = () => {
     setSelectedChannelId(channel._id);
   };
 
+  const handleRightClick = (event, channel) => {
+    event.preventDefault();
+    setContextMenu(
+      contextMenu === null
+        ? { mouseX: event.clientX - 2, mouseY: event.clientY - 4, channel }
+        : null,
+    );
+    setRightClickedChannel(channel.channelName); // Update right-clicked channel name
+  };
+
+  const handleCloseContextMenu = () => {
+    setContextMenu(null);
+  };
+
+  const handleViewChannelUsers = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/channels/${contextMenu.channel._id}/users`, {
+        withCredentials: true
+      });
+
+      setChannelUsers(response.data.users);
+      setIsModalOpen(true);
+      setContextMenu(null);
+    } catch (error) {
+      console.error('Error fetching channel users:', error.response?.data || error.message);
+    }
+  };
+
   return (
-    <Stack sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      width: '100%',
-      height: '100vh',
-      backgroundColor: '#39063a',
-      overflow: 'hidden',
-    }}>
+    <Stack
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        height: '100vh',
+        backgroundColor: '#39063a',
+        overflow: 'hidden',
+      }}
+    >
       <Header />
       <Stack direction='row'>
         <Sidebar />
@@ -156,6 +193,7 @@ const WorkSpace = () => {
                               color: selectedChannel === channel.channelName ? 'black' : 'inherit',
                             }}
                             onClick={() => handleSelectChannel(channel)}
+                            onContextMenu={(event) => handleRightClick(event, channel)}
                           >
                             # {channel.channelName}
                           </p>
@@ -183,7 +221,8 @@ const WorkSpace = () => {
                     {isDirectMessageOpen && (
                       <Stack className='w-full mt-1 ' gap={1}>
                         <p className='hover:bg-[#5c315e] rounded-md  pl-3'>Archit Agrawal</p>
-                        <p className='cursor-pointer'><span className='px-1 rounded-md pb-[2px] bg-[#623763]  '>+</span> Add colleagues</p>
+                        <p className='cursor-pointer'>
+                          <span className='px-1 rounded-md pb-[2px] bg-[#623763]  '>+</span> Add colleagues</p>
                       </Stack>
                     )}
                   </Box>
@@ -198,6 +237,21 @@ const WorkSpace = () => {
         </Box>
       </Stack>
 
+      {/* Context Menu for Channel */}
+      <Menu
+        open={contextMenu !== null}
+        onClose={handleCloseContextMenu}
+        anchorReference="anchorPosition"
+        anchorPosition={
+          contextMenu !== null
+            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+            : undefined
+        }
+      >
+        <MenuItem onClick={handleViewChannelUsers}>View Users</MenuItem>
+      </Menu>
+
+      {/* Modal to show channel users */}
       <Modal
         open={isModalOpen}
         onClose={handleCloseModal}
@@ -212,35 +266,28 @@ const WorkSpace = () => {
             left: '50%',
             transform: 'translate(-50%, -50%)',
             width: 400,
-            bgcolor: 'background.paper',
+            bgcolor: '#4f2050',
             boxShadow: 24,
             p: 4,
             borderRadius: '8px',
+            color: 'white',
           }}
         >
-          <h2 id="modal-title" className='text-2xl font-bold'>Create a Channel</h2>
-          <TextField
-            fullWidth
-            placeholder='Enter channel name'
-            value={newChannelName}
-            onChange={(e) => setNewChannelName(e.target.value)}
-            margin="normal"
-            sx={{
-              width: "90%",
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "12px",
-                height: "50px"
-              },
-              "& .MuiInputBase-input::placeholder": {
-                color: "#454245",
-                opacity: 0.50,
-              },
-            }}
-          />
+          <h2 id="modal-title" className='text-2xl font-bold'>{rightClickedChannel} Users</h2> {/* Use rightClickedChannel here */}
+          <List>
+            {channelUsers.length > 0 ? (
+              channelUsers.map(user => (
+                <ListItem key={user._id} sx={{ color: 'white' }}>
+                  {user.username}
+                </ListItem>
+              ))
+            ) : (
+              <p>No users found in this channel.</p>
+            )}
+          </List>
           <Button
             variant="contained"
-            color="primary"
-            onClick={handleAddChannel}
+            onClick={handleCloseModal}
             sx={{
               bgcolor: "#611e69",
               width: "90%",
@@ -249,7 +296,7 @@ const WorkSpace = () => {
               borderRadius: "12px",
             }}
           >
-            Add Channel
+            Close
           </Button>
         </Box>
       </Modal>
