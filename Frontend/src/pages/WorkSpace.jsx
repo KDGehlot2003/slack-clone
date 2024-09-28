@@ -26,8 +26,9 @@ const WorkSpace = () => {
   const [contextMenu, setContextMenu] = useState(null);
   const [channelUsers, setChannelUsers] = useState([]);
   const [isAddChannelModalOpen, setIsAddChannelModalOpen] = useState(false);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false); // Invite Modal State
+  const [inviteUsername, setInviteUsername] = useState(''); // Invite user email input
 
-  const token = Cookie.get('user');
 
   const toggleChannelAccordion = () => {
     setIsChannelOpen(!isChannelOpen);
@@ -42,6 +43,9 @@ const WorkSpace = () => {
 
   const handleOpenAddChannelModal = () => setIsAddChannelModalOpen(true);
   const handleCloseAddChannelModal = () => setIsAddChannelModalOpen(false);
+
+  const handleOpenInviteModal = () => setIsInviteModalOpen(true); // Open Invite Modal
+  const handleCloseInviteModal = () => setIsInviteModalOpen(false); // Close Invite Modal
 
   const handleAddChannel = async () => {
     try {
@@ -104,8 +108,6 @@ const WorkSpace = () => {
       const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/channels/${contextMenu.channel._id}/users`, {
         withCredentials: true
       });
-      console.log(response.data.users);
-      
 
       setChannelUsers(response.data.users);
       setIsModalOpen(true);
@@ -115,8 +117,26 @@ const WorkSpace = () => {
     }
   };
 
+  const handleInviteUser = async () => {
+    if (!inviteUsername.trim()) {
+      console.error('Invite email is empty');
+      return;
+    }
 
-  
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_APP_API_URL}/channels/${inviteUsername}/${contextMenu.channel._id}/join`,
+        { email: inviteUsername.trim() },
+        { withCredentials: true }
+      );
+      
+      console.log('Invite successful:', response.data);
+      setInviteUsername(''); // Clear the input field after success
+      handleCloseInviteModal(); // Close the modal
+    } catch (error) {
+      console.error('Error inviting user:', error.response?.data || error.message);
+    }
+  };
 
   return (
     <Stack
@@ -273,6 +293,44 @@ const WorkSpace = () => {
         </Box>
       </Modal>
 
+      {/* Invite User Modal */}
+      <Modal
+        open={isInviteModalOpen}
+        onClose={handleCloseInviteModal}
+        aria-labelledby="invite-modal-title"
+        aria-describedby="invite-modal-description"
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: '#4f2050',
+            boxShadow: 24,
+            p: 4,
+            borderRadius: '8px',
+            color: 'white',
+          }}
+        >
+          <h2 id="invite-modal-title" className='text-2xl font-bold mb-7'>Invite User</h2>
+          <input
+            type="email"
+            value={inviteUsername}
+            onChange={(e) => setInviteUsername(e.target.value)}
+            placeholder="Enter email"
+            className="mb-4 p-2 w-full bg-[#5c315e] text-white rounded"
+          />
+          <button
+            onClick={handleInviteUser}
+            className="px-4 py-2 bg-[#611e69] text-white rounded-md"
+          >
+            Invite
+          </button>
+        </Box>
+      </Modal>
+
       <Menu
         open={contextMenu !== null}
         onClose={handleCloseContextMenu}
@@ -284,6 +342,7 @@ const WorkSpace = () => {
         }
       >
         <MenuItem onClick={handleViewChannelUsers}>View Users</MenuItem>
+        <MenuItem onClick={handleOpenInviteModal}>Invite</MenuItem>
       </Menu>
     </Stack>
   );

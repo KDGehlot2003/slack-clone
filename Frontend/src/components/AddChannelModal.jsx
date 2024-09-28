@@ -24,7 +24,7 @@ const AddChannelModal = ({ isOpen, onClose, newChannelName, setNewChannelName, h
           color: 'white',
         }}
       >
-        <h2 id="add-channel-modal-title" className='text-2xl font-bold'>Add Channel</h2>
+        <h2 id="add-channel-modal-title" className='text-2xl font-bold mb-10'>Add Channel</h2>
         <TextField
           fullWidth
           variant="outlined"

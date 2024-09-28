@@ -15,7 +15,7 @@ router.use(verifyJWT)
 
 router.route("/").post(createChannel);
 router.route("/:channelId").get(getChannel);
-router.post('/:userId/:channelId/join', joinChannel);
+router.post('/:username/:channelId/join', joinChannel);
 router.post('/:userId/:channelId/leave', leaveChannel);
 router.get('/:channelId/users', getChannelUsers);
 
