@@ -8,53 +8,41 @@ const ChannelChat = ({ selectedChannel, selectedChannelId }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const messagesEndRef = useRef(null);
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
 
+  // Fetch messages function
+  const fetchMessages = async () => {
+    if (!selectedChannelId) return; // Skip if no channel selected
 
-  // TODO: Fetch user from the server
-  // /users/:username add this to the url to get the user's username
+    setLoading(true);
+    setError(null);
 
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/messages/${selectedChannelId}/`, {
+        withCredentials: true,
+      });
 
-  // Fetch messages when selectedChannelId changes
+      setMessages(response.data.messages.reverse());
+    } catch (error) {
+      setError('Failed to fetch messages.');
+      console.error('Error fetching messages:', error.response?.data || error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Polling effect to fetch messages every few seconds
   useEffect(() => {
-    const fetchMessages = async () => {
-      if (!selectedChannelId) return; // Skip if no channel selected
+    if (!selectedChannelId) return;
 
-      setLoading(true);
-      setError(null);
-
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}/messages/${selectedChannelId}/`, {
-          withCredentials: true,
-        });
-
-        // const reversedMessages = response.data.messages.reverse();
-
-        // if the message is of user then set the sender to 'You'
-
-        
-        // const messages = reversedMessages.map((message) => {
-        //   if (message.sender === user.username) {
-        //     message.sender = 'You';
-        //   }
-        //   return message;
-        // });
-
-        // setMessages(messages);
-
-        // console.log(response);
-        
-
-        setMessages(response.data.messages.reverse());
-      } catch (error) {
-        setError('Failed to fetch messages.');
-        console.error('Error fetching messages:', error.response?.data || error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    // Fetch messages immediately when channel changes
     fetchMessages();
+
+    // Set up polling
+    const intervalId = setInterval(fetchMessages, 5000);
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(intervalId);
   }, [selectedChannelId]);
 
   const handleSendMessage = async () => {
@@ -72,7 +60,7 @@ const ChannelChat = ({ selectedChannel, selectedChannelId }) => {
         });
 
         // Update the local message state after sending
-        setMessages([ messageToSend, ...messages]);
+        setMessages([messageToSend, ...messages]);
         setNewMessage('');
       } catch (error) {
         console.error('Error sending message:', error.response?.data || error.message);
