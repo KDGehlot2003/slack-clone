@@ -88,13 +88,15 @@ const joinChannel = asyncHandler( async (req,res) => {
 })
 
 const leaveChannel = asyncHandler( async (req,res) => {
-    const {userId, channelId} = req.params;
+    const {username, channelId} = req.params;
 
-    const user = await User.findById(userId);
+    const user = await User.findOne({username});
 
     if (!user) {
         return res.status(404).json({message: "user not found"})
     }
+
+    const userId = user._id;
 
     const channel = await Channel.findById(channelId);
 
