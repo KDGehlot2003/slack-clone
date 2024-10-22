@@ -144,7 +144,7 @@ const logoutUser = asyncHandler( async (req,res) => {
 
 const getUserProfile = asyncHandler( async (req,res) => {
 
-    const userProfile = await User.findOne(req.user?._id).select('-password')
+    const userProfile = await User.findOne(req.user?._id).select('-password -email')
 
     if (!userProfile) {
         return res.status(404).json({message: "User not Found"})

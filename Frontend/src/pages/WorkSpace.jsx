@@ -8,7 +8,6 @@ import Modal from '@mui/material/Modal';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import axios from 'axios';
 import ChannelChat from '../components/ChannelChat.jsx';
-import Cookie from 'js-cookie';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import List from '@mui/material/List';
@@ -119,7 +118,7 @@ const WorkSpace = () => {
 
   const handleInviteUser = async () => {
     if (!inviteUsername.trim()) {
-      console.error('Invite email is empty');
+      console.error('user is empty');
       return;
     }
 
@@ -316,10 +315,10 @@ const WorkSpace = () => {
         >
           <h2 id="invite-modal-title" className='text-2xl font-bold mb-7'>Invite User</h2>
           <input
-            type="email"
+            type="text"
             value={inviteUsername}
             onChange={(e) => setInviteUsername(e.target.value)}
-            placeholder="Enter email"
+            placeholder="Enter Username"
             className="mb-4 p-2 w-full bg-[#5c315e] text-white rounded"
           />
           <button

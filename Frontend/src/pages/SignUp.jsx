@@ -29,7 +29,7 @@ const SignUp = () => {
       });
 
       if(response.status === 201) {
-        localStorage.setItem('token', response.data.token);
+        // localStorage.setItem('token', response.data.token);
         toast.success('Registration successful! Redirecting to workspace...');
         setTimeout(() => navigate('/workspace'), 2000);
       }
